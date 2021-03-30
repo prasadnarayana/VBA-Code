@@ -1,0 +1,50 @@
+Function Product_Family_Two(family As String)
+
+    Dim arr(12, 2) As String
+    
+    arr(0, 0) = "ACESSORIES"
+    arr(0, 1) = "CONSUMABLE"
+    arr(1, 0) = "CONTACT LENSES"
+    arr(1, 1) = "CONTACT LENSES"
+    arr(2, 0) = "LENSES"
+    arr(2, 1) = "LENSES"
+    arr(3, 0) = "MARKETING PROMOTION"
+    arr(3, 1) = "MARKETING PROMOTION"
+    arr(4, 0) = "OPTICAL FRAMES"
+    arr(4, 1) = "OPTICAL FRAMES"
+    arr(5, 0) = "READING GLASSES"
+    arr(5, 1) = "READING GLASSES"
+    arr(6, 0) = "SOLUTIONS"
+    arr(6, 1) = "CONSUMABLE"
+    arr(7, 0) = "SUNGLASSES"
+    arr(7, 1) = "SUNGLASSES"
+    arr(8, 0) = "TORIC CONTACT LENSES"
+    arr(8, 1) = "CONTACT LENSES"
+    arr(9, 0) = "CONTACT LENS TRIALS"
+    arr(9, 1) = "CONTACT LENSES"
+    arr(10, 0) = "MISC. INCOME"
+    arr(10, 1) = "MISC. INCOME"
+    arr(11, 0) = "STORE STOCK LENSES"
+    arr(11, 1) = "LENSES"
+    arr(12, 0) = "GOODS TRANSPORT AGENCY SERVICES"
+    arr(12, 1) = "GOODS TRANSPORT AGENCY SERVICES"
+    
+    Product_Family_Two = WorksheetFunction.VLookup(family, arr, 2, 0)
+    
+End Function
+
+Function Calculate_CP(pf As String, qty As Integer)
+    
+    Dim totalCp As Double
+    
+    If pf = "LENSES" Then
+        totalCp = 0.25 * qty
+    ElseIf pf = "OPTICAL FRAMES" Then
+        totalCp = 0.5 * qty
+    Else
+        totalCp = 0
+    End If
+    
+    Calculate_CP = totalCp
+    
+End Function
