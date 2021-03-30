@@ -271,3 +271,95 @@ Sub Generate_Townhall_Summary()
         MsgBox "Invalid Workbook choosen to run this macro"
     End If
 End Sub
+Sub Insert_Coumn_Weekly_Binder()
+    If ActiveWorkbook.Name = "Weekly Binder.xlsx" And ActiveSheet.Name = "4 Grand Summary" Then
+        Columns("E:E").Select
+        selection.Insert Shift:=xlToRight
+        
+        Range("C4:D8").Copy
+        Range("D4").Select
+        ActiveSheet.Paste
+        
+        Range("C10:D14").Copy
+        Range("D10").Select
+        ActiveSheet.Paste
+        
+        Range("C16:D20").Copy
+        Range("D16").Select
+        ActiveSheet.Paste
+        
+        Range("C22:D26").Copy
+        Range("D22").Select
+        ActiveSheet.Paste
+        
+        Range("C32:D36").Copy
+        Range("D32").Select
+        ActiveSheet.Paste
+        
+        Range("C39:D42").Copy
+        Range("D39").Select
+        ActiveSheet.Paste
+        
+        Range("C1:D1").Copy
+        Range("D1").Select
+        ActiveSheet.Paste
+        
+        Range("C6:C7").ClearContents
+        Range("C12:C13").ClearContents
+        Range("C18:C19").ClearContents
+        Range("C24:C25").ClearContents
+        Range("C34:C35").ClearContents
+        Range("C39:C40").ClearContents
+        
+        Range("C5").Select
+    Else
+        MsgBox "Wrong workbook / Worksheet choosen"
+    End If
+End Sub
+
+Sub Add_Fields_Multiple_Pivtotables()
+    Dim PT As pivotTable
+    Dim PvtField As PivotField
+    
+    For Each PT In ActiveSheet.PivotTables
+        Set PvtField = PT.PivotFields("RBM")
+        
+        PvtField.Orientation = xlPageField
+        PvtField.Position = 1
+    Next PT
+End Sub
+
+Sub Highlight_Duplicates_With_Reverse_Strings()
+    Dim lastRow As Integer
+    Dim visibleCellsCount As Integer
+    Dim actualStr As String
+    Dim reverseStr As String
+    Dim i As Integer
+    
+    lastRow = Range("A1").End(xlDown).Row
+    
+    For i = 2 To lastRow
+        If Cells(i, 1).Interior.Color <> vbYellow Then
+            actualStr = Cells(i, 1)
+            reverseStr = StrReverse(actualStr)
+            
+            Range("A1").Select
+            'Range(Selection, Selection.End(xlToRight)).Select
+            selection.AutoFilter Field:=1, _
+            Criteria1:=actualStr, Operator:=xlOr, Criteria2:=reverseStr
+            
+            visibleCellsCount = ActiveSheet.Range(ActiveCell, _
+            selection.End(xlDown)).SpecialCells(xlCellTypeVisible).Cells.Count
+            
+            If visibleCellsCount > 2 Then
+                ActiveSheet.AutoFilter.Range.Offset(1). _
+                SpecialCells(xlCellTypeVisible).Cells(1, 1).Select
+                ActiveSheet.Range(ActiveCell, selection.End(xlDown)).Select
+                selection.SpecialCells(xlCellTypeVisible).Select
+                selection.Interior.Color = vbYellow
+            End If
+            
+            selection.AutoFilter
+        End If
+    Next i
+End Sub
