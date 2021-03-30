@@ -1,0 +1,273 @@
+Sub Add_All_Fields_Values()
+
+    Dim PT As pivotTable
+    Dim iCol As Long
+    Dim iColEnd As Long
+    
+    Set PT = ActiveSheet.PivotTables(1)
+    
+    With PT
+       iCol = 1
+       iColEnd = .PivotFields.Count
+    
+        For iCol = 1 To iColEnd
+            With .PivotFields(iCol)
+              If .Orientation = 0 Then
+                  .Orientation = xlDataField
+              End If
+            End With
+        Next iCol
+    End With
+
+End Sub
+
+Public Sub Pivot_Fields_To_Sum()
+    ' Cycles through all pivot data fields and sets to sum
+    ' Created by Dr Moxie
+ 
+    Dim pf As PivotField
+
+    With selection.pivotTable
+        .ManualUpdate = True
+        For Each pf In .DataFields
+            With pf
+                .Function = xlSum
+                .numberFormat = "_(* #,##0_);_(* (#,##0);_(* ""-""??_);_(@_)"
+            End With
+        Next pf
+        .ManualUpdate = False
+    End With
+    
+End Sub
+
+Sub Unhide_Selected_Sheets()
+
+    Dim wks As Worksheet
+    Dim MsgResult As VbMsgBoxResult
+ 
+    For Each wks In ActiveWorkbook.Worksheets
+        If wks.Visible = xlSheetHidden Then
+            wks.Visible = xlSheetVisible
+        End If
+    Next
+    
+End Sub
+
+Sub Generate_SAP_and_COVID_Checklist_Sheets()
+
+    Dim i As Integer
+    
+    For i = 2 To 31
+        ' To copy and paste the last sheet
+        Sheets(i - 1).Copy After:=Sheets(i - 1)
+        ' To rename the sheet
+        Sheets(i).Name = i & "-MAR-2021"
+    Next i
+    
+End Sub
+
+Sub Generate_Townhall_Summary()
+    Dim overallSummary As String
+    Dim currYear As Date
+    Dim lastYear As Date
+    Dim lastMonth As Date
+    
+    'MIS components
+    Dim heading As String
+    Dim gsvLtl As String
+    Dim gsvTotalDays As String
+    Dim asp As String
+    Dim cpVolume As String
+    Dim cppspd As String
+    Dim traffic As String
+    Dim conversion As String
+    Dim mallSales As String
+    Dim storeSales As String
+    Dim misSummary As String
+    
+    'Categories Components
+    Dim heading2 As String
+    Dim computerGlasses As String
+    Dim loyaltyIssuanceVol As String
+    Dim loyaltyIssuanceValue As String
+    Dim progressiveSales As String
+    Dim progressiveToMonthlyRatio As String
+    Dim hetSales As String
+    Dim categorySummary As String
+    
+    Dim wordApp As Word.Application
+    Dim myDoc As Word.Document
+    Dim objSelection As Word.selection
+    
+    'Creating a new instance of word only if there no other instances
+    Set wordApp = New Word.Application
+    
+    'Making word App Visible
+    wordApp.Visible = True
+    
+    'Creating a new document
+    Set myDoc = wordApp.Documents.Add()
+    
+    'Create a Selection object with the help of WordObject.
+    Set objSelection = wordApp.selection
+    
+    If ActiveWorkbook.Name = "Townhall Tracker.xlsx" Then
+        currYear = ActiveSheet.Range("A3")
+        lastYear = ActiveSheet.Range("B3")
+        lastMonth = ActiveSheet.Range("K3")
+        
+        'Please find February 2021 Snapshot:
+
+        'Format is as follows:
+        'Details_Feb 21_Feb 20_% Ovr LY Feb 20
+
+        heading = "Please find " & Application.WorksheetFunction. _
+        Text(currYear, "mmmm") & " " & Application.WorksheetFunction. _
+        Text(currYear, "yyyy") & " Snapshot:" & vbNewLine & _
+        vbNewLine & "Format is as follows:" & vbNewLine & _
+        "Details_" & Application.WorksheetFunction. _
+        Text(currYear, "mmm") & " " & Application.WorksheetFunction. _
+        Text(currYear, "yy") & "_" & Application.WorksheetFunction. _
+        Text(lastYear, "mmm") & " " & Application.WorksheetFunction. _
+        Text(lastYear, "yy") & "_% Ovr LY " & Application.WorksheetFunction. _
+        Text(lastYear, "mmm") & " " & Application.WorksheetFunction. _
+        Text(lastYear, "yy")
+        
+        '1) GSV vs last year( LTL days) :
+        '7.35 Crs _  8.35 Crs _ 88%
+
+        gsvLtl = Range("D5").value & vbNewLine & Range("E5").value & " Crs_" _
+        & Range("F5").value & " Crs_" & Round(Range("G5").value, 2) * _
+        100 & "%"
+        
+        '2)GSV vs last year ( Total 31 Day operational ) :
+        '7.35 Crs _ 8.35 Crs _ 88%
+        
+        gsvTotalDays = Range("D6").value & vbNewLine & Range("E6").value & " Crs_" _
+        & Range("F6").value & " Crs_" & Round(Range("G6").value, 2) * _
+        100 & "%"
+        
+        '3)ASP :
+        '5002 _ 4629 _ 108%
+        
+        asp = Range("D7").value & vbNewLine & Range("E7").value & "_" _
+        & Range("F7").value & "_" & Round(Range("G7").value, 2) * _
+        100 & "%"
+        
+        '4)CP Volumes:
+        '12984 _15619 _ 83%
+        
+        cpVolume = Range("D8").value & vbNewLine & Range("E8").value & "_" _
+        & Range("F8").value & "_" & Round(Range("G8").value, 2) * _
+        100 & "%"
+        
+        '5)CPPSPD:
+        '3.62_ 4.36 _ 83%
+        
+        cppspd = Range("D9").value & vbNewLine & Range("E9").value & "_" _
+        & Range("F9").value & "_" & Round(Range("G9").value, 2) * _
+        100 & "%"
+        
+        '6)Traffic:
+        '66480 _ 174983 _ 38%
+        
+        traffic = Range("D10").value & vbNewLine & Range("E10").value & "_" _
+        & Range("F10").value & "_" & Round(Range("G10").value, 2) * _
+        100 & "%"
+        
+        '7)Conversion:
+        '39% _ 18% _ 219%
+        
+        conversion = Range("D11").value & "%" & vbNewLine & _
+        Round(Range("E11").value, 2) * 100 & "%" & "_" & _
+        Round(Range("F11").value, 2) * 100 & "%_" & Round(Range("G11").value, 2) * _
+        100 & "%"
+        
+        '8)Mall Sales:
+        '1.56 Crs  _ 1.96 Crs _ 80%
+        
+        mallSales = Range("D12").value & vbNewLine & Range("E12").value & " Crs_" _
+        & Range("F12").value & " Crs_" & Round(Range("G12").value, 2) * 100 & "%"
+        
+        '9)Stores sales:
+        '5.79 Crs _ 6.39 Crs _ 91%
+
+        storeSales = Range("D13").value & vbNewLine & Range("E13").value & " Crs_" _
+        & Range("F13").value & " Crs_" & Round(Range("G13").value, 2) * 100 & "%"
+        
+        misSummary = heading & vbNewLine & vbNewLine & gsvLtl & _
+        vbNewLine & vbNewLine & gsvTotalDays & vbNewLine & vbNewLine & _
+        asp & vbNewLine & vbNewLine & cpVolume & vbNewLine & vbNewLine & _
+        cppspd & vbNewLine & vbNewLine & traffic & vbNewLine & vbNewLine & _
+        conversion & vbNewLine & vbNewLine & mallSales & vbNewLine & vbNewLine _
+        & storeSales
+        
+        'Categories performance is compared with previous month
+        'Format followed is Feb 21 _ Jan 21  _ % Over Jan 21
+        
+        heading2 = "Categories performance is compared with previous month" _
+        & vbNewLine & "Format followed is " & Application.WorksheetFunction. _
+        Text(currYear, "mmm") & " " & Application.WorksheetFunction. _
+        Text(currYear, "yy") & "_" & Application.WorksheetFunction. _
+        Text(lastMonth, "mmm") & " " & Application.WorksheetFunction. _
+        Text(lastMonth, "yy") & "_% Ovr " & Application.WorksheetFunction. _
+        Text(lastMonth, "mmm") & " " & Application.WorksheetFunction. _
+        Text(lastMonth, "yy")
+        
+        '1)Computer Glass sales performance ( Units ):
+        '1584 _ 1533 _103%
+        
+        computerGlasses = Range("I5").value & vbNewLine & Range("J5").value & "_" _
+        & Range("K5").value & "_" & Round(Range("L5").value, 2) * 100 & "%"
+        
+        '2)Loyalty Issuance (Vol ):
+        '2059 _ 1499 _ 137%
+        
+        loyaltyIssuanceVol = Range("I6").value & vbNewLine & Range("J6").value & "_" _
+        & Range("K6").value & "_" & Round(Range("L6").value, 2) * 100 & "%"
+        
+        '3)Loyalty Issuance (Value):
+        '8.19 Lacs _ 5.98 Lacs _137%
+        
+        loyaltyIssuanceValue = Range("I7").value & vbNewLine & Range("J7").value & _
+        " Lacs_" & Range("K7").value & " Lacs_" & Round(Range("L7").value, 2) _
+        * 100 & "%"
+        
+        '4)Progressive Sales  ( Value):
+        '1.60 Crs _ 2.07 Crs _ 77%
+        
+        progressiveSales = Range("I8").value & vbNewLine & Range("J8").value & " Crs_" _
+        & Range("K8").value & " Crs_" & Round(Range("L8").value, 2) * 100 & "%"
+        
+        '5)Progressive To Monthly Sales Ratio:
+        '22%  _ 22% _ 100%
+        
+        progressiveToMonthlyRatio = Range("I9").value & vbNewLine & _
+        Round(Range("J9").value, 2) * 100 & "%" & "_" & _
+        Round(Range("K9").value, 2) * 100 & "%_" & Round(Range("L9").value, 2) * _
+        100 & "%"
+        
+        '6) HET Sales :
+        '2.7 Lacs_ 7.4 Lacs _ 36%
+        
+        hetSales = Range("I10").value & vbNewLine & Range("J10").value & _
+        " Lacs_" & Range("K10").value & " Lacs_" & Round(Range("L10").value, 2) _
+        * 100 & "%"
+        
+        categorySummary = heading2 & vbNewLine & vbNewLine & computerGlasses _
+        & vbNewLine & vbNewLine & loyaltyIssuanceVol & vbNewLine & vbNewLine _
+        & loyaltyIssuanceValue & vbNewLine & vbNewLine & progressiveSales _
+        & vbNewLine & vbNewLine & progressiveToMonthlyRatio & vbNewLine _
+        & vbNewLine & hetSales
+        
+        overallSummary = misSummary & vbNewLine & vbNewLine & categorySummary _
+        & vbNewLine & vbNewLine & "Thanks"
+        
+        'Use this Selection object to type the text into the WordDocument.
+        objSelection.TypeText (overallSummary)
+        
+        'MsgBox overallSummary
+    Else
+        MsgBox "Invalid Workbook choosen to run this macro"
+    End If
+End Sub
