@@ -1,0 +1,17 @@
+Sub Generate_SAP_and_COVID_Checklist_Sheets()
+
+    Dim i As Integer
+    Dim shName As String
+    Dim mon As String
+    
+    shName = Sheets(1).Name
+    mon = Mid(shName, 3, 3)
+    
+    For i = 2 To 31
+        ' To copy and paste the last sheet
+        Sheets(i - 1).Copy After:=Sheets(i - 1)
+        ' To rename the sheet
+        Sheets(i).Name = i & "-" & mon & "-2021"
+    Next i
+    
+End Sub
