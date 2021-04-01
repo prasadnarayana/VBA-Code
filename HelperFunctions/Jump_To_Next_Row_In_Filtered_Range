@@ -1,0 +1,12 @@
+Sub Jump_To_Next_Row_In_Filtered_Range()
+    Range("A1").Select
+    Range(selection, selection.End(xlToRight)).Select
+    selection.AutoFilter Field:=1, Criteria1:="BA"
+    'ActiveSheet.Range("$A$1:$B$12").AutoFilter Field:=1, Criteria1:="BA"
+    'Range("A3:A10").Select
+    ActiveSheet.AutoFilter.Range.Offset(1).SpecialCells(xlCellTypeVisible).Cells(1, 1).Select
+    ActiveSheet.Range(ActiveCell, selection.End(xlDown)).Select
+    selection.SpecialCells(xlCellTypeVisible).Select
+    selection.Interior.Color = vbYellow
+    selection.AutoFilter
+End Sub
