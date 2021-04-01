@@ -1,0 +1,22 @@
+Sub Add_All_Fields_Values()
+
+    Dim PT As pivotTable
+    Dim iCol As Long
+    Dim iColEnd As Long
+    
+    Set PT = ActiveSheet.PivotTables(1)
+    
+    With PT
+       iCol = 1
+       iColEnd = .PivotFields.Count
+    
+        For iCol = 1 To iColEnd
+            With .PivotFields(iCol)
+              If .Orientation = 0 Then
+                  .Orientation = xlDataField
+              End If
+            End With
+        Next iCol
+    End With
+
+End Sub
