@@ -1,0 +1,42 @@
+Sub Consilidate_Traffic()
+    Dim noOfRows As Long
+    Dim noOfColumns As Long
+    Dim i As Integer
+    Dim nexRow As Long
+    
+    Sheets("Working").Activate
+    
+    Application.DisplayAlerts = False
+    Application.ScreenUpdating = False
+    Application.CutCopyMode = False
+    Application.AskToUpdateLinks = False
+    
+    noOfRows = Range("A3").End(xlDown).Row
+    noOfColumns = Range("A3").End(xlToRight).Column
+    
+    For i = 3 To noOfColumns
+        Cells(3, i).Copy
+        Sheets("Consolidated").Select
+        nexRow = WorksheetFunction.CountA(Range("A:A")) + 1
+        Range(Cells(nexRow, "A"), Cells(nexRow + (noOfRows - 4), "A")).Select
+        Selection.PasteSpecial Paste:=xlPasteValues
+        Sheets("Working").Select
+        Range("A4:B" & noOfRows).Select
+        Selection.Copy
+        Sheets("Consolidated").Select
+        Cells(nexRow, "B").Select
+        Selection.PasteSpecial Paste:=xlPasteValues
+        Sheets("Working").Select
+        Range(Cells(4, i), Cells(noOfRows, i)).Select
+        Selection.Copy
+        Sheets("Consolidated").Select
+        Cells(nexRow, "D").Select
+        Selection.PasteSpecial Paste:=xlPasteValues
+        Sheets("Working").Select
+    Next i
+    
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    Application.CutCopyMode = True
+    Application.AskToUpdateLinks = True
+End Sub
