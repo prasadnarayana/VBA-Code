@@ -1,0 +1,81 @@
+Sub MTDUsingPivots()
+    ' Declare variables
+    Dim PSheet As Worksheet
+    Dim DSheet As Worksheet
+    Dim PCache As PivotCache
+    Dim PTable As PivotTable
+    Dim PRange As Range
+    Dim LastRow As Long
+    Dim LastCol As Long
+    
+    ' Insert a new worksheet
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Worksheets("Summary").Delete
+    Sheets.Add after:=ActiveSheet
+    ActiveSheet.Name = "Summary"
+    Application.DisplayAlerts = True
+    Set PSheet = Worksheets("Summary")
+    Set DSheet = Worksheets("Dump_Data")
+    
+    ' Define Data Range
+    LastRow = DSheet.Cells(Rows.count, 1).End(xlUp).Row
+    LastCol = DSheet.Cells(1, Columns.count).End(xlToLeft).Column
+    Set PRange = DSheet.Cells(1, 1).Resize(LastRow, LastCol)
+    
+    ' Define Pivot Cache
+    Set PCache = ActiveWorkbook.PivotCaches.Create _
+    (SourceType:=xlDatabase, SourceData:=PRange). _
+    CreatePivotTable(TableDestination:=PSheet.Cells(2, 2), _
+    TableName:="Target&Revenue")
+    
+    ' Insert Blank Pivot Table
+'    Set PTable = PCache.CreatePivotTable _
+'    (tabledestination:=PSheet.Cells(1, 1), _
+'    TableName:="Target&Revenue")
+'
+    ' Insert Filter Fields
+    With ActiveSheet.PivotTables("Target&Revenue"). _
+    PivotFields("PF2")
+        .Orientation = xlPageField
+        .Position = 1
+    End With
+    
+    With ActiveSheet.PivotTables("Target&Revenue"). _
+    PivotFields("Status")
+        .Orientation = xlPageField
+        .Position = 2
+    End With
+    
+    With ActiveSheet.PivotTables("Target&Revenue"). _
+    PivotFields("Calendar Day")
+        .Orientation = xlPageField
+        .Position = 3
+    End With
+    
+    ' Insert Row Fields
+    With ActiveSheet.PivotTables("Target&Revenue"). _
+    PivotFields("CG")
+        .Orientation = xlRowField
+        .Position = 1
+    End With
+    
+    ' Insert Data Fields
+    With ActiveSheet.PivotTables("Target&Revenue"). _
+    PivotFields("Net Sales With Tax (D = B-C)")
+        .Orientation = xlDataField
+        .Position = 1
+    End With
+    
+    ' Step8: Format Pivot Table
+    With ActiveSheet.PivotTables("Target&Revenue")
+        .ShowTableStyleRowStripes = True
+        .InGridDropZones = True
+        .RowAxisLayout xlTabularRow
+        ' .TableStyle2 = ""
+        .DisplayContextTooltips = False
+        .ShowDrillIndicators = False
+        .PivotFields("CG").Subtotals = Array(False, False, False, False, False, False, False, False, False, False, False, False)
+    End With
+
+End Sub
