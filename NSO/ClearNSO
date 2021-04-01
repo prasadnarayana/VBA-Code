@@ -1,0 +1,10 @@
+Sub ClearNSO()
+    ' To delete the cell values in specified range apart from subtotals
+    Range("G5:L6").ClearContents
+    Range("G8:L8").ClearContents
+    Range("G10:L13").ClearContents
+    Range("G15:L18").ClearContents
+    Range("G20:L24").ClearContents
+    Range("G26:L26").ClearContents
+    Range("G28:L28").ClearContents
+End Sub
