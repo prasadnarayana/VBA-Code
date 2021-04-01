@@ -1,0 +1,45 @@
+Sub Insert_Coumn_Weekly_Binder()
+    If ActiveWorkbook.Name = "Weekly Binder.xlsx" And ActiveSheet.Name = "4 Grand Summary" Then
+        Columns("E:E").Select
+        selection.Insert Shift:=xlToRight
+        
+        Range("C4:D8").Copy
+        Range("D4").Select
+        ActiveSheet.Paste
+        
+        Range("C10:D14").Copy
+        Range("D10").Select
+        ActiveSheet.Paste
+        
+        Range("C16:D20").Copy
+        Range("D16").Select
+        ActiveSheet.Paste
+        
+        Range("C22:D26").Copy
+        Range("D22").Select
+        ActiveSheet.Paste
+        
+        Range("C32:D36").Copy
+        Range("D32").Select
+        ActiveSheet.Paste
+        
+        Range("C39:D42").Copy
+        Range("D39").Select
+        ActiveSheet.Paste
+        
+        Range("C1:D1").Copy
+        Range("D1").Select
+        ActiveSheet.Paste
+        
+        Range("C6:C7").ClearContents
+        Range("C12:C13").ClearContents
+        Range("C18:C19").ClearContents
+        Range("C24:C25").ClearContents
+        Range("C34:C35").ClearContents
+        Range("C39:C40").ClearContents
+        
+        Range("C5").Select
+    Else
+        MsgBox "Wrong workbook / Worksheet choosen"
+    End If
+End Sub
