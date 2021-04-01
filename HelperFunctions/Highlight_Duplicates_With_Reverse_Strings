@@ -1,0 +1,34 @@
+Sub Highlight_Duplicates_With_Reverse_Strings()
+    Dim lastRow As Integer
+    Dim visibleCellsCount As Integer
+    Dim actualStr As String
+    Dim reverseStr As String
+    Dim i As Integer
+    
+    lastRow = Range("A1").End(xlDown).Row
+    
+    For i = 2 To lastRow
+        If Cells(i, 1).Interior.Color <> vbYellow Then
+            actualStr = Cells(i, 1)
+            reverseStr = StrReverse(actualStr)
+            
+            Range("A1").Select
+            'Range(Selection, Selection.End(xlToRight)).Select
+            selection.AutoFilter Field:=1, _
+            Criteria1:=actualStr, Operator:=xlOr, Criteria2:=reverseStr
+            
+            visibleCellsCount = ActiveSheet.Range(ActiveCell, _
+            selection.End(xlDown)).SpecialCells(xlCellTypeVisible).Cells.Count
+            
+            If visibleCellsCount > 2 Then
+                ActiveSheet.AutoFilter.Range.Offset(1). _
+                SpecialCells(xlCellTypeVisible).Cells(1, 1).Select
+                ActiveSheet.Range(ActiveCell, selection.End(xlDown)).Select
+                selection.SpecialCells(xlCellTypeVisible).Select
+                selection.Interior.Color = vbYellow
+            End If
+            
+            selection.AutoFilter
+        End If
+    Next i
+End Sub
