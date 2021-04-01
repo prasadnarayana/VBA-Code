@@ -1,0 +1,69 @@
+Sub NSO()
+    ' Declaring variables
+    Dim dump As Worksheet
+    Dim cusTraffic As Worksheet
+    Dim i As Integer
+    Dim total_rows As Integer
+    Dim custTrafficRows As Integer
+    Dim netSalesRange As Range
+    Dim cpRange As Range
+    Dim storeCodeRange As Range
+    Dim dateRange As Range
+    Dim custTrafficRange As Range
+    Dim yesterDay As Date
+    Dim wf As WorksheetFunction: Set wf = Application.WorksheetFunction
+    
+    
+    ' To set the dump data to the worksheet variable dump
+    Set dump = Sheets("Dump_Data")
+    ' To set the customer traffic data to the worksheet variable cusTraffic
+    Set cusTraffic = Sheets("Customer_Traffic")
+    
+    Sheets("NSO").Activate
+    
+    yesterDay = Range("B1")
+    
+    ' To get the no of rows present in the dump
+    total_rows = dump.Range("A1").End(xlDown).Row
+    
+    ' To get the no of rows present in the customer traffic dump
+    custTrafficRows = cusTraffic.Range("A1").End(xlDown).Row
+    
+    ' Net sales with tax range (column N in dump)
+    Set netSalesRange = dump.Range("N2:N" & total_rows)
+    ' CP range (column K in dump)
+    Set cpRange = dump.Range("K2:K" & total_rows)
+    ' Store Code Range (column B in dump)
+    Set storeCodeRange = dump.Range("B2:B" & total_rows)
+    ' Date Range (column A in dump)
+    Set dateRange = dump.Range("A2:A" & total_rows)
+    
+    ' Customer traffic data
+    Set custTrafficRange = cusTraffic.Range("A2:D" & custTrafficRows)
+        
+    '************************************
+    ' Logic To generate NSO Data
+    '************************************
+    For i = 5 To 28
+        If Cells(i, "A").Interior.Color <> RGB(255, 255, 0) Then
+            ' To calculate the sum of Sales FTD based on store code
+            Cells(i, "G") = wf.SumIfs(netSalesRange, storeCodeRange, Cells(i, "A"), dateRange, yesterDay)
+        
+            ' To calculate the sum of Sales MTD based on store code
+            Cells(i, "H") = wf.SumIfs(netSalesRange, storeCodeRange, Cells(i, "A"))
+            
+            ' To calculate the sum of CP FTD based on store code
+            Cells(i, "I") = wf.SumIfs(cpRange, storeCodeRange, Cells(i, "A"), dateRange, yesterDay)
+            
+            ' To calculate the sum of CP MTD based on store code
+            Cells(i, "J") = wf.SumIfs(cpRange, storeCodeRange, Cells(i, "A"))
+            
+            ' To get FF FTD Data
+            Cells(i, "K") = Application.VLookup(Cells(i, "A"), custTrafficRange, 3, 0)
+            
+            ' To get FF FTD Data
+            Cells(i, "L") = Application.VLookup(Cells(i, "A"), custTrafficRange, 4, 0)
+        End If
+    Next i
+    
+End Sub
