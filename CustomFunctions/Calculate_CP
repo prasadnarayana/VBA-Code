@@ -1,0 +1,15 @@
+Function Calculate_CP(pf As String, qty As Integer)
+    
+    Dim totalCp As Double
+    
+    If pf = "LENSES" Then
+        totalCp = 0.25 * qty
+    ElseIf pf = "OPTICAL FRAMES" Then
+        totalCp = 0.5 * qty
+    Else
+        totalCp = 0
+    End If
+    
+    Calculate_CP = totalCp
+    
+End Function
