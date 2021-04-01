@@ -1,0 +1,68 @@
+Sub MTD()
+    ' Variable declarations
+    Dim dump As Worksheet
+    Dim i As Integer
+    Dim total_rows As Integer
+    Dim netSalesRange As Range
+    Dim cityGroupRange As Range
+    Dim statusRange As Range
+    Dim pf2Range As Range
+    Dim salesQtyRange As Range
+    Dim cpRange As Range
+    Dim wf As WorksheetFunction: Set wf = Application.WorksheetFunction
+    
+    
+    ' To set the dump data to the worksheet variable dump
+    Set dump = Sheets("Dump_Data")
+    
+    Sheets("MTD").Activate
+    
+    ' To clear the data in table
+    Range("C4:J15").ClearContents
+        
+    ' To get the no of rows present in the dump
+    total_rows = dump.Range("A1").End(xlDown).Row
+    
+    ' Net sales with tax range (column N in dump)
+    Set netSalesRange = dump.Range("N2:N" & total_rows)
+    ' City group range (column D in dump)
+    Set cityGroupRange = dump.Range("D2:D" & total_rows)
+    ' Status range (column E in dump)
+    Set statusRange = dump.Range("E2:E" & total_rows)
+    ' PF2 range (column I in dump)
+    Set pf2Range = dump.Range("I2:I" & total_rows)
+    ' Total sales qty range (column J in dump)
+    Set salesQtyRange = dump.Range("J2:J" & total_rows)
+    ' CP range (column K in dump)
+    Set cpRange = dump.Range("K2:K" & total_rows)
+    
+    '************************************
+    ' To calculate MTD Data
+    '************************************
+    For i = 4 To 15
+        ' To get net sales based on city group
+        Cells(i, "C") = wf.SumIfs(netSalesRange, cityGroupRange, Cells(i, "B"))
+        
+        ' To get net sales of comp stores based on city group
+        Cells(i, "D") = wf.SumIfs(netSalesRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores")
+        
+        ' To get lens sales based on city group
+        Cells(i, "E") = wf.SumIfs(netSalesRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores", pf2Range, "LENSES")
+        
+        ' To get lens qty based on city group
+        Cells(i, "F") = wf.SumIfs(salesQtyRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores", pf2Range, "LENSES")
+        
+        ' To get frames sales based on city group
+        Cells(i, "G") = wf.SumIfs(netSalesRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores", pf2Range, "OPTICAL FRAMES")
+        
+        ' To get frames qty based on city group
+        Cells(i, "H") = wf.SumIfs(salesQtyRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores", pf2Range, "OPTICAL FRAMES")
+        
+        ' To get CP based on city group
+        Cells(i, "J") = wf.SumIfs(cpRange, cityGroupRange, Cells(i, "B"), statusRange, "Comp Stores")
+        
+        ' To calculate Cp sales (lens sales + frames sales)
+        Cells(i, "I") = Cells(i, "E") + Cells(i, "G")
+    Next i
+    
+End Sub
