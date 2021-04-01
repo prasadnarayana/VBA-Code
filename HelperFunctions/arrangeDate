@@ -1,0 +1,25 @@
+Sub arrangeDate()
+    Dim no_rows As Integer
+    Dim total_rows As Integer
+    Dim count As Integer
+    Dim mon As Integer
+    Dim yr As Integer
+    Dim temp As String
+    Dim dy As Integer
+    
+    mon = Range("I2")
+    yr = Range("J2")
+    
+    ' To calculate the total rows the data
+    total_rows = Range("A1").End(xlDown).Row
+    
+    For i = 2 To total_rows
+        ' To get date value as string
+        temp = Cells(i, "C")
+        ' To read the first no in the string (ex: 3/5/2019, o/p: 3)
+        dy = CInt(Left(temp, InStr(temp, "/") - 1))
+        
+        ' To store the value as date in the cell
+        Cells(i, "C") = DateSerial(month:=mon, day:=dy, year:=yr)
+    Next i
+End Sub
