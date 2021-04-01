@@ -1,0 +1,18 @@
+Public Sub Pivot_Fields_To_Sum()
+    ' Cycles through all pivot data fields and sets to sum
+    ' Created by Dr Moxie
+ 
+    Dim pf As PivotField
+
+    With selection.pivotTable
+        .ManualUpdate = True
+        For Each pf In .DataFields
+            With pf
+                .Function = xlSum
+                .numberFormat = "_(* #,##0_);_(* (#,##0);_(* ""-""??_);_(@_)"
+            End With
+        Next pf
+        .ManualUpdate = False
+    End With
+    
+End Sub
