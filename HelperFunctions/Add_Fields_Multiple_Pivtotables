@@ -1,0 +1,11 @@
+Sub Add_Fields_Multiple_Pivtotables()
+    Dim PT As pivotTable
+    Dim PvtField As PivotField
+    
+    For Each PT In ActiveSheet.PivotTables
+        Set PvtField = PT.PivotFields("RBM")
+        
+        PvtField.Orientation = xlPageField
+        PvtField.Position = 1
+    Next PT
+End Sub
