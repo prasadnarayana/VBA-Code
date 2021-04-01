@@ -1,0 +1,120 @@
+Sub InsertPivotTable()
+    ' Step1: Declare Variables
+    ' ------------------------
+    ' To create a sheet for a new pivot table.
+    Dim PSheet As Worksheet
+    ' To use as a data sheet.
+    Dim DSheet As Worksheet
+    ' To use as a name for pivot table cache.
+    Dim PCache As PivotCache
+    ' To use as a name for our pivot table.
+    Dim PTable As PivotTable
+    ' to define source data range.
+    Dim PRange As Range
+    ' To get the last row and column of our data range.
+    Dim LastRow As Long
+    Dim LastCol As Long
+    
+    ' Step2: Insert a New Worksheet
+    ' -----------------------------
+    ' It will insert a new worksheet with the name “Pivot Table” before the
+    ' active worksheet and if there is worksheet with the same name already, it
+    ' will delete it first.
+    
+    ' After inserting a new worksheet, this code will set the value of PSheet
+    ' variable to pivot table worksheet and DSheet to source data worksheet.
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Worksheets("PivotTable").Delete
+    Sheets.Add Before:=ActiveSheet
+    ActiveSheet.Name = "PivotTable"
+    Application.DisplayAlerts = True
+    Set PSheet = Worksheets("PivotTable")
+    Set DSheet = Worksheets("Dump_Data")
+    
+    ' Step3: Define Data Range
+    ' ------------------------
+    ' This code will start from the first cell of the data table and select up to the
+    ' last row and then up to the last column.
+    
+    ' And finally, define that selected range as a source.
+    
+    ' The best part is, you don’t need to change data source every time while
+    ' creating the pivot table.
+    LastRow = DSheet.Cells(Rows.count, 1).End(xlUp).Row
+    LastCol = DSheet.Cells(1, Columns.count).End(xlToLeft).Column
+    Set PRange = DSheet.Cells(1, 1).Resize(LastRow, LastCol)
+    
+    ' Step4: Define Pivot Cache
+    ' -------------------------
+    ' This code works in two way, first define a pivot cache by using data
+    ' source and second define the cell address in the newly inserted
+    ' worksheet to insert the pivot table.
+    
+    ' You can change the position the pivot table by editing this code.
+    Set PCache = ActiveWorkbook.PivotCaches.Create _
+    (SourceType:=xlDatabase, SourceData:=PRange). _
+    CreatePivotTable(TableDestination:=PSheet.Cells(2, 2), _
+    TableName:="MTDPivtoTable")
+    
+    ' Step5: Insert Blank Pivot Table
+    ' -------------------------------
+    ' This code creates a blank pivot table and names it "SalesPivotTable". You
+    ' can change this name from the code itself.
+    Set PTable = PCache.CreatePivotTable _
+    (TableDestination:=PSheet.Cells(1, 1), TableName:="MTDPivtoTable")
+    
+    ' Step6: Insert Row and Column Fields
+    ' -----------------------------------
+    ' In this code, CG and Ops Manager mentioned as two fields. Now, if
+    ' you look at the code you'll find that there is also a position number is
+    ' there
+    
+    ' This position number defines the sequence of fields.
+    
+    ' Whenever you need to add more than one fields (Row or Column) make
+    ' sure to specify their position.
+    
+    ' And, you can change fields by editing their name from code.
+    With ActiveSheet.PivotTables("MTDPivtoTable").PivotFields("CG")
+    .Orientation = xlRowField
+    .Position = 1
+    End With
+    
+    With ActiveSheet.PivotTables("MTDPivtoTable").PivotFields("Ops Manager")
+    .Orientation = xlRowField
+    .Position = 2
+    End With
+'
+'    'Insert Column Fields
+'    With ActiveSheet.PivotTables("MTDPivtoTable").PivotFields("Status")
+'    .Orientation = xlColumnField
+'    .Position = 1
+'    End With
+    
+    ' Step7: Insert Data Field
+    ' ------------------------
+    ' With above code, you can add Net Sales With Tax (D = B-C) as the value field.
+    
+    ' And this code will format values as a number with (,) separator. We are
+    ' using xlsum to sum values but you can also use xlcount and other
+    ' functions as well.
+    With ActiveSheet.PivotTables("MTDPivtoTable").PivotFields("Net Sales With Tax (D = B-C)")
+        .Orientation = xlDataField
+        .Position = 1
+        .Function = xlSum
+        '.NumberFormat = "#,##0"
+    End With
+    
+    ' Step7: Format Pivot Table
+    ' -------------------------
+    With ActiveSheet.PivotTables("MTDPivtoTable")
+        .ShowTableStyleRowStripes = True
+        .InGridDropZones = True
+        .RowAxisLayout xlTabularRow
+        ' .TableStyle2 = ""
+        .DisplayContextTooltips = False
+        .ShowDrillIndicators = False
+        .PivotFields("CG").Subtotals = Array(False, False, False, False, False, False, False, False, False, False, False, False)
+    End With
+End Sub
