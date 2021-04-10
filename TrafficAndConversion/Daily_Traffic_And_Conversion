@@ -1,0 +1,40 @@
+Sub Daily_Traffic_And_Conversion()
+    Dim dataSh As Worksheet
+    Dim totalRowsInDataSh As Integer
+    Dim totalRowsInActiveSh As Integer
+    Dim totalColumnsInActiveSh As Integer
+    Dim i, j As Integer
+    Dim lookupValue As String
+    Dim dataShAddress As String
+    Dim value As Double
+    
+    If ActiveSheet.Name = "Storewise_Daily CP" Then
+        Set dataSh = Sheets("CP Dump")
+    ElseIf ActiveSheet.Name = "Storewise_Daily FF" Then
+        Set dataSh = Sheets("FF Dump")
+    Else
+        MsgBox "You have choosen wrong sheet to RUN a macro"
+        Exit Sub
+    End If
+    
+    totalRowsInDataSh = dataSh.Range("C1")
+    dataShAddress = "B3:E" & totalRowsInDataSh
+    totalRowsInActiveSh = ActiveSheet.Range("C1")
+    totalColumnsInActiveSh = 13 + ActiveSheet.Range("E1")
+    
+    ActiveSheet.Range(Cells(4, 14), Cells(totalRowsInActiveSh, totalColumnsInActiveSh)).Select
+    selection.ClearContents
+    
+    For i = 4 To totalRowsInActiveSh
+        For j = 14 To totalColumnsInActiveSh
+            lookupValue = Cells(i, 3) & " - " & (j - 13)
+            value = WorksheetFunction.IfError(Application.VLookup(lookupValue, dataSh.Range(dataShAddress), 4, 0), 0)
+            
+            If value >= 0 And value < 0.5 Then
+                Cells(i, j).ClearContents
+            Else
+                Cells(i, j) = value
+            End If
+        Next j
+    Next i
+End Sub
