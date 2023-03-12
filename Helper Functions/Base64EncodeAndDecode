@@ -1,0 +1,51 @@
+Sub InsertDBUserIDAndPasswordIntoSPList()
+    Dim encodeUserid, encodePassword, userID, password As String
+    
+    userID = InputBox("Enter Userid", "Userid")
+    password = InputBox("Enter Width", "Password")
+    
+    'Encode DB Userid to Base64
+    encodeUserid = EncodeBase64(userID)
+    
+    'Encode DB Password to Base64
+    encodePassword = EncodeBase64(userID)
+    'Debug.Print encode_str
+    
+    'decodeStr = DecodeBase64(encode_str)
+    'Debug.Print decode_str
+End Sub
+
+Private Function EncodeBase64(ByVal text As String) As String
+  Dim arrData() As Byte
+  
+  arrData = StrConv(text, vbFromUnicode)
+
+  Dim objXML As Object
+  Dim objNode As Object
+
+  Set objXML = CreateObject("MSXML2.DOMDocument")
+  Set objNode = objXML.createElement("b64")
+
+  objNode.DataType = "bin.base64"
+  objNode.nodeTypedValue = arrData
+  'EncodeBase64 = Replace(objNode.text, vbLf, "")
+  EncodeBase64 = objNode.text
+
+  Set objNode = Nothing
+  Set objXML = Nothing
+End Function
+
+Private Function DecodeBase64(ByVal strData As String) As String
+    Dim objXML As Object
+    Dim objNode As Object
+
+    Set objXML = CreateObject("MSXML2.DOMDocument")
+    Set objNode = objXML.createElement("b64")
+    objNode.DataType = "bin.base64"
+    objNode.text = strData
+    'DecodeBase64 = objNode.nodeTypedValue
+    DecodeBase64 = StrConv(objNode.nodeTypedValue, vbUnicode)
+
+    Set objNode = Nothing
+    Set objXML = Nothing
+End Function
